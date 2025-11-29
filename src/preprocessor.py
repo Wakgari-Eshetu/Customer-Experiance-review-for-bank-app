@@ -3,7 +3,7 @@ import pandas as pd
 class ReviewPreprocessor:
     def __init__(self, df):
         self.df = df
-
+        
     def remove_duplicates(self):
         self.df.drop_duplicates(subset="review", inplace=True)
 

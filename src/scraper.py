@@ -8,22 +8,37 @@ class PlayStoreScraper:
         self.source = source
 
     def scrape(self, count=400):
-        result, _ = reviews(
-            self.app_id,
-            lang="en",
-            country="et",
-            sort=Sort.NEWEST,
-            count=count
-        )
+        """Scrape reviews safely, handle missing keys or empty results."""
+        try:
+            result, _ = reviews(
+                self.app_id,
+                lang='en',
+                country='et',  # or 'us' if no reviews in Ethiopia
+                sort=Sort.NEWEST,
+                count=count
+            )
 
-        df = pd.DataFrame(result)
-        df = df[['content', 'score', 'at']]
-        df.columns = ['review', 'rating', 'date']
+            if not result:
+                print(f"No reviews found for {self.bank_name}")
+                return pd.DataFrame(columns=['review','rating','date','bank','source'])
 
-        df['bank'] = self.bank_name
-        df['source'] = self.source
+            df = pd.DataFrame(result)
 
-        return df
+            # Ensure expected columns exist
+            for col in ['content', 'score', 'at']:
+                if col not in df.columns:
+                    df[col] = None
+
+            df = df[['content', 'score', 'at']]
+            df.columns = ['review', 'rating', 'date']
+            df['bank'] = self.bank_name
+            df['source'] = self.source
+
+            return df
+
+        except Exception as e:
+            print(f"Error scraping {self.bank_name}: {e}")
+            return pd.DataFrame(columns=['review','rating','date','bank','source'])
 
     def save_raw(self, df):
         filename = self.bank_name.replace(" ", "_").lower() + ".csv"
