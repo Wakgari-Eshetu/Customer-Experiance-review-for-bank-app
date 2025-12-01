@@ -17,3 +17,51 @@ CREATE TABLE reviews (
     sentiment_score FLOAT,
     source VARCHAR(100)
 );
+ALTER TABLE banks
+ADD CONSTRAINT unique_bank_name UNIQUE (bank_name);
+
+--Count reviews per bank
+SELECT b.bank_name, COUNT(r.review_id) AS total_reviews
+FROM banks b
+LEFT JOIN reviews r ON b.bank_id = r.bank_id
+GROUP BY b.bank_name   
+ORDER BY total_reviews DESC;
+
+--Average rating per bank
+SELECT b.bank_name, AVG(r.rating) AS avg_rating
+FROM banks b
+LEFT JOIN reviews r ON b.bank_id = r.bank_id
+GROUP BY b.bank_name
+ORDER BY avg_rating DESC;
+
+--sentiment distribution per bank
+SELECT b.bank_name, r.sentiment_label, COUNT(r.review_id) AS sentiment_count    
+FROM banks b
+LEFT JOIN reviews r ON b.bank_id = r.bank_id   
+GROUP BY b.bank_name, r.sentiment_label    
+ORDER BY b.bank_name, sentiment_count DESC;
+
+--Top rated reviews per bank
+SELECT b.bank_name, r.review_text, r.rating
+FROM banks b
+LEFT JOIN reviews r ON b.bank_id = r.bank_id
+WHERE r.rating = 5
+ORDER BY b.bank_name;
+--count reviews by sentimnent
+SELECT 
+    b.bank_name,
+    r.sentiment_label,
+    COUNT(*) AS sentiment_count
+FROM 
+    reviews r
+JOIN 
+    banks b 
+ON 
+    r.bank_id = b.bank_id
+GROUP BY 
+    b.bank_name, r.sentiment_label
+ORDER BY 
+    b.bank_name, sentiment_count DESC;
+
+
+
