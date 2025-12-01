@@ -1,0 +1,15 @@
+{
+    "sqltools.connections": [
+        {
+            "ssh": "Disabled",
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "task-3",
+            "database": "bank_reviews",
+            "username": "postgres",
+            "password": "Wakgari@123"
+        }
+    ]
+}
